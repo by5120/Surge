@@ -1,0 +1,54 @@
+#!name=去App开屏广告
+#!desc=去除常用APP的开屏广告
+#!category=去广告
+
+[Rule]
+# 禁用QUIC
+AND,((PROTOCOL,UDP), (DEST-PORT,443)),REJECT-NO-DROP
+# AMDC
+# AND,((OR,((USER-AGENT,Cainiao*), (USER-AGENT,AMap*))), (URL-REGEX,^http:\/\/(amdc|\d).+\/amdc\/mobileDispatch$)),REJECT-DROP
+
+[URL Rewrite]
+# app丨美菜商城
+^https?:\/\/mall-entrance.yunshanmeicai.com\/entrance\/cmsAd\/getList - reject
+# app丨汽车之家
+^https?:\/\/adproxy.autohome.com.cn\/AdvertiseService - reject
+# app丨知乎
+^https?:\/\/pic2.zhimg.com/100 - reject
+^https?:\/\/pic4.zhimg.com/100 - reject
+^https?:\/\/api.zhihu.com\/commercial_api\/launch_v2 - reject
+^https?:\/\/api.zhihu.com\/commercial_api\/real_time_launch_v2 - reject
+# app丨京东1号会员店
+# ^https?:\/\/img10.360buyimg.com\/pop\/jfs\/t1 - reject
+# app丨京东开屏广告
+^https?:\/\/api.m.jd.com\/client\.action\?functionId=start - reject
+
+[Body Rewrite]
+#>高德地图
+# http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'delpaths([["data","tipsOperationLocation"]])'
+# http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_business\/process\/marketingOperationStructured\? 'delpaths([["obj","data","resourcePlacement"]])'
+# http-response-jq ^https:\/\/m5\.amap\.com\/ws\/shield\/search_poi\/homepage\? 'delpaths([["history_tags"]])'
+# http-response-jq ^https:\/\/m5-zb\.amap\.com\/ws\/sharedtrip\/taxi\/order_detail_car_tips\? 'delpaths([["data","carTips","data","popupInfo"]])'
+
+[Map Local]
+# app丨交管12123
+^https?:\/\/gab.122.gov.cn\/eapp\/m\/sysquery\/adver data-type=text data="{}" status-code=200
+# app丨拼多多
+# ^https?:\/\/api.(pinduoduo|yangkeduo).com\/api\/cappuccino\/splash data-type=text data="{}" status-code=200
+# app丨转转
+^https?:\/\/app.zhuanzhuan.com\/zz\/v2\/zzlogic\/getOpenScreen data-type=text data="{}" status-code=200
+# app丨中国联通
+^https?:\/\/m.client.10010.com\/mobileService\/customer\/accountListData\.htm data-type=text data="{}" status-code=200
+# app丨萤石云视频
+^https?:\/\/api.ys7.com\/api\/ads\/v2 data-type=text data="" status-code=200
+^https?:\/\/mobads.baidu.com\/ads data-type=text data="" status-code=200
+^https?:\/\/mobads.baidu.com\/query_ad data-type=text data="" status-code=200
+# 顺丰速运丨微信小程序丨顶部横幅
+^https?:\/\/ucmp.sf-express.com\/proxy\/operation-platform\/info-flow-adver\/query data-type=text data="{}" status-code=200
+# 菜鸟裹裹丨支付宝小程序丨底部商品推广
+^https?:\/\/guide-acs.m.taobao.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad data-type=text data="" status-code=200
+# 菜鸟裹裹丨支付宝小程序丨通用广告请求
+^https?:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.guoguo\.nbnetflow\.ads\.show data-type=text data="" status-code=200
+
+[MITM]
+hostname = %APPEND% adproxy.autohome.com.cn, mall-entrance.yunshanmeicai.com, gab.122.gov.cn, api.pinduoduo.com, api.yangkeduo.com, app.zhuanzhuan.com, m.client.10010.com, img10.360buyimg.com, api.m.jd.com, api.ys7.com, mobads.baidu.com, api.zhihu.com, *.zhimg.com, guide-acs.m.taobao.com, ucmp.sf-express.com
